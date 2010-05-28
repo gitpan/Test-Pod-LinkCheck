@@ -1,0 +1,43 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.64.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 fc7b2d5df77b1132ae9679bfdf3205af14e0bf01 Build.PL
+SHA1 7c20bd41332ef8145d53ea1c63ef456bd8f87153 Changes
+SHA1 c5ac8f2c4a911fd71a40a1ade6fabe7365266d6f CommitLog
+SHA1 fc3da2a8df058caf5c80cce64cac9a0851696f52 INSTALL
+SHA1 4453307b3cf4463122d8a2d52a3742997562eabd LICENSE
+SHA1 cd3a3e16467afff4b3c3d16789363023c0dbe889 MANIFEST
+SHA1 a08fa30c9a93a2d03b7024a060821269f6c16c66 MANIFEST.SKIP
+SHA1 ec325817e0191e9414330ab4e2b56ca27f8d5dcc META.json
+SHA1 fb4487774cbf3f8e8441643ca7bd67344cab6f36 META.yml
+SHA1 cb78766541cea7fd39ea13391778e1a7e46d44f4 Makefile.PL
+SHA1 92cc0a101f17431742a6d9b176f4184f6eb63f64 README
+SHA1 98c4b900effa3245bea2c06f6dda0254575c2149 dist.ini
+SHA1 e2e328b42708f256c8d31548b38ae4e339485b56 examples/linkcheck.t
+SHA1 fc5a730f18e0bb6a37c7ef6710bda7ad1cc2d5df lib/Test/Pod/LinkCheck.pm
+SHA1 5d5dbaa9ba7ce99451d9b996f89afc41516d459d t/00-compile.t
+SHA1 b39ba9b8e94b1bdac1e5da7447b389de1676e86d t/apocalypse.t
+SHA1 fb8a61faec66948440ae8cad9c1325dd1099d108 t/cpan_backend.t
+SHA1 1249876e897cc24390ad90540ee4b28ddf13bacf t/linkcheck.t
+SHA1 d417a952e462119afaa269c327ca70cc9e514a61 t/linkcheck_import.t
+SHA1 654e81debd7c8e2bc2f4f775931ea3f48cc794c0 t/simple.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkv/RsEACgkQGfr7vsGKgxylkACeKEZ7iyyjj140KZvvR3m4Fjw2
+mFYAoJxzXmyvAs8+ZIVEE2E9F1Xpn01j
+=d991
+-----END PGP SIGNATURE-----

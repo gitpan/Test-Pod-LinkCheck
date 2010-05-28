@@ -1,0 +1,21 @@
+Revision history for Test::Pod::LinkCheck
+
+0.004
+	Released: 2010-05-28 04:29:48 UTC
+
+	ready for CPAN
+
+0.003
+	Released: 2010-05-28 04:26:57 UTC
+
+	fixed the SIGNATURE stuff
+
+0.002
+	Released: 2010-05-28 04:20:14 UTC
+
+	fix stopwords for POD spelling test
+
+0.001
+	Released: 2010-05-28 04:16:42 UTC
+
+	initial release

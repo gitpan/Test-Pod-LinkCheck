@@ -1,0 +1,29 @@
+=======================================
+2010-05-27 21:27:05 -0700 release-0.003
+=======================================
+
+  commit a5203b9158104e32cf6ac721ad5c2bd7f4395dd0
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu May 27 21:27:05 2010 -0700
+  
+    New CPAN release of Test-Pod-LinkCheck - v0.003 
+
+=======================================
+2010-05-27 21:20:23 -0700 release-0.002
+=======================================
+
+  commit 52616f18f4b8d05a5dc0a8bded2606871e47bcc2
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu May 27 21:20:23 2010 -0700
+  
+    New CPAN release of Test-Pod-LinkCheck - v0.002
+
+  commit db6351b2caaf0a5f78200f943dc84d44ef001714
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu May 27 21:19:58 2010 -0700
+  
+    add more stopwords 
+
+===================================
+End of changes in the last 365 days
+===================================

@@ -1,0 +1,164 @@
+NAME
+    Test::Pod::LinkCheck - Tests POD for invalid links
+
+VERSION
+      This document describes v0.004 of Test::Pod::LinkCheck - released May 27, 2010 as part of Test-Pod-LinkCheck.
+
+SYNOPSIS
+            #!/usr/bin/perl
+            use strict; use warnings;
+
+            use Test::More;
+
+            eval "use Test::Pod::LinkCheck";
+            if ( $@ ) {
+                    plan skip_all => 'Test::Pod::LinkCheck required for testing POD';
+            } else {
+                    Test::Pod::LinkCheck->new->all_pod_ok;
+            }
+
+DESCRIPTION
+    This module looks for any links in your POD and verifies that they point
+    to a valid resource. It uses the Pod::Simple parser to analyze the pod
+    files and look at their links. In a nutshell, it looks for "L<Foo>"
+    links and makes sure that Foo exists. It also recognizes section links,
+    "L</SYNOPSIS>" for example. Also, manpages are resolved and checked. If
+    you linked to a CPAN module and it is not installed, it is an error!
+
+    This module does NOT check "http" links like "L<http://www.google.com>"
+    in your pod. For that, please check out Test::Pod::No404s.
+
+    Normally, you wouldn't want this test to be run during end-user
+    installation because they might not have the modules installed! It is
+    HIGHLY recommended that this be used only for module authors'
+    RELEASE_TESTING phase. To do that, just modify the synopsis to add an
+    env check :)
+
+    This module normally uses the OO method to run tests, but you can use
+    the functional style too. Just explicitly ask for the "all_pod_ok" or
+    "pod_ok" function to be imported when you use this module.
+
+            #!/usr/bin/perl
+            use strict; use warnings;
+            use Test::Pod::LinkCheck qw( all_pod_ok );
+            all_pod_ok();
+
+ATTRIBUTES
+  check_cpan
+    If disabled, this module will not check the CPAN module database to see
+    if a link is a valid CPAN module or not. As of now this module only
+    supports CPANPLUS as the backend, others may be added.
+
+    The default is: true
+
+  cpan_backend
+    Selects the CPAN backend to use for querying modules. The available ones
+    are: CPANPLUS, CPAN, and CPANSQLite.
+
+    The default is: CPANPLUS
+
+  cpan_section_err
+    If enabled, a link pointing to a CPAN module's specific section is
+    treated as an error. Since the module isn't installed we are unable to
+    verify the section actually exists.
+
+    The default is: false
+
+  verbose
+    If enabled, this module will print extra diagnostics for the links it's
+    checking.
+
+    The default is: true
+
+METHODS
+  pod_ok
+    Accepts the filename to check, and an optional test name.
+
+    This method will pass the test if there is no POD links present in the
+    POD or if all links are not an error. Furthermore, if the POD was
+    malformed as reported by Pod::Simple, the test will fail and not attempt
+    to check the links.
+
+    When it fails, this will show any failing links as diagnostics. Also,
+    some extra information is printed if verbose is enabled.
+
+    The default test name is: "LinkCheck test for FILENAME"
+
+  all_pod_ok
+    Accepts an optional array of files to check. By default it uses all POD
+    files in your distribution.
+
+    This method is what you will usually run. Every file is passed to the
+    "pod_ok" function. This also sets the test plan to be the number of
+    files.
+
+SEE ALSO
+App::PodLinkCheck
+Pod::Checker
+Test::Pod::No404s
+SUPPORT
+    You can find documentation for this module with the perldoc command.
+
+      perldoc Test::Pod::LinkCheck
+
+  Websites
+    *   Search CPAN
+
+        <http://search.cpan.org/dist/Test-Pod-LinkCheck>
+
+    *   AnnoCPAN: Annotated CPAN documentation
+
+        <http://annocpan.org/dist/Test-Pod-LinkCheck>
+
+    *   CPAN Ratings
+
+        <http://cpanratings.perl.org/d/Test-Pod-LinkCheck>
+
+    *   CPAN Forum
+
+        <http://cpanforum.com/dist/Test-Pod-LinkCheck>
+
+    *   RT: CPAN's Bug Tracker
+
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-Pod-LinkCheck>
+
+    *   CPANTS Kwalitee
+
+        <http://cpants.perl.org/dist/overview/Test-Pod-LinkCheck>
+
+    *   CPAN Testers Results
+
+        <http://cpantesters.org/distro/T/Test-Pod-LinkCheck.html>
+
+    *   CPAN Testers Matrix
+
+        <http://matrix.cpantesters.org/?dist=Test-Pod-LinkCheck>
+
+    *   Source Code Repository
+
+        The code is open to the world, and available for you to hack on.
+        Please feel free to browse it and play with it, or whatever. If you
+        want to contribute patches, please send me a diff or prod me to pull
+        from your repository :)
+
+        <http://github.com/apocalypse/perl-test-pod-linkcheck>
+
+  Bugs
+    Please report any bugs or feature requests to "bug-test-pod-linkcheck at
+    rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-Pod-LinkCheck>. I
+    will be notified, and then you'll automatically be notified of progress
+    on your bug as I make changes.
+
+AUTHOR
+      Apocalypse <APOCAL@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2010 by Apocalypse.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
+    The full text of the license can be found in the LICENSE file included
+    with this distribution.
+

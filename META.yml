@@ -1,0 +1,230 @@
+---
+abstract: 'Tests POD for invalid links'
+author:
+  - 'Apocalypse <APOCAL@cpan.org>'
+build_requires:
+  File::Find: 0
+  File::Temp: 0
+  Module::Build: 0.3601
+  Test::More: 0
+  Test::Tester: 0
+configure_requires:
+  Module::Build: 0.3601
+generated_by: 'Dist::Zilla version 2.101310'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Test-Pod-LinkCheck
+no_index:
+  directory:
+    - t
+    - examples
+provides:
+  Test::Pod::LinkCheck:
+    file: lib/Test/Pod/LinkCheck.pm
+    version: 0.004
+recommends: {}
+requires:
+  App::PodLinkCheck::ParseLinks: 4
+  App::PodLinkCheck::ParseSections: 0
+  Capture::Tiny: 0
+  Config: 0
+  Exporter: 0
+  File::Spec: 0
+  Moose: 1.01
+  Moose::Util::TypeConstraints: 1.01
+  Pod::Find: 0
+  Test::Builder: 0.94
+  Test::Pod: 1.44
+  perl: 5.008
+resources:
+  bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Test-Pod-LinkCheck
+  homepage: http://search.cpan.org/dist/Test-Pod-LinkCheck/
+  license: http://dev.perl.org/licenses/
+  repository: http://github.com/apocalypse/perl-test-pod-linkcheck
+version: 0.004
+x_Dist_Zilla:
+  plugins:
+    -
+      class: Dist::Zilla::Plugin::BumpVersionFromGit
+      name: '@Apocalyptic/BumpVersionFromGit'
+      version: 0.006
+    -
+      class: Dist::Zilla::Plugin::GatherDir
+      name: '@Apocalyptic/GatherDir'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::PruneCruft
+      name: '@Apocalyptic/PruneCruft'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::AutoPrereq
+      name: '@Apocalyptic/AutoPrereq'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::GenerateFile
+      name: '@Apocalyptic/MANIFEST.SKIP'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::ManifestSkip
+      name: '@Apocalyptic/ManifestSkip'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::CompileTests
+      name: '@Apocalyptic/CompileTests'
+      version: 1.100740
+    -
+      class: Dist::Zilla::Plugin::ApocalypseTests
+      name: '@Apocalyptic/ApocalypseTests'
+      version: 0.01
+    -
+      class: Dist::Zilla::Plugin::Prepender
+      name: '@Apocalyptic/Prepender'
+      version: 1.100960
+    -
+      class: Dist::Zilla::Plugin::Authority
+      name: '@Apocalyptic/Authority'
+      version: 0.01
+    -
+      class: Dist::Zilla::Plugin::PkgVersion
+      name: '@Apocalyptic/PkgVersion'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::PodWeaver
+      name: '@Apocalyptic/PodWeaver'
+      version: 3.100710
+    -
+      class: Dist::Zilla::Plugin::NextRelease
+      name: '@Apocalyptic/NextRelease'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::ChangelogFromGit
+      name: '@Apocalyptic/ChangelogFromGit'
+      version: 0.002
+    -
+      class: Dist::Zilla::Plugin::MinimumPerl
+      name: '@Apocalyptic/MinimumPerl'
+      version: 0.02
+    -
+      class: Dist::Zilla::Plugin::MetaProvides::Package
+      name: '@Apocalyptic/MetaProvides::Package'
+      version: 1.10001919
+    -
+      class: Dist::Zilla::Plugin::Bugtracker
+      name: '@Apocalyptic/Bugtracker'
+      version: 1.100701
+    -
+      class: Dist::Zilla::Plugin::Homepage
+      name: '@Apocalyptic/Homepage'
+      version: 1.100700
+    -
+      class: Dist::Zilla::Plugin::MetaConfig
+      name: '@Apocalyptic/MetaConfig'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::Repository
+      name: '@Apocalyptic/Repository'
+      version: 0.11
+    -
+      class: Dist::Zilla::Plugin::MetaResources
+      name: '@Apocalyptic/MetaResources'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::MetaNoIndex
+      name: '@Apocalyptic/MetaNoIndex'
+      version: 1.101130
+    -
+      class: Dist::Zilla::Plugin::License
+      name: '@Apocalyptic/License'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::MakeMaker
+      name: '@Apocalyptic/MakeMaker'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::ModuleBuild
+      name: '@Apocalyptic/ModuleBuild'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::DualBuilders
+      name: '@Apocalyptic/DualBuilders'
+      version: 0.02
+    -
+      class: Dist::Zilla::Plugin::MetaYAML
+      name: '@Apocalyptic/MetaYAML'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::MetaJSON
+      name: '@Apocalyptic/MetaJSON'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::ReadmeFromPod
+      name: '@Apocalyptic/ReadmeFromPod'
+      version: 0.09
+    -
+      class: Dist::Zilla::Plugin::InstallGuide
+      name: '@Apocalyptic/InstallGuide'
+      version: 1.100701
+    -
+      class: Dist::Zilla::Plugin::Signature
+      name: '@Apocalyptic/Signature'
+      version: 1.100930
+    -
+      class: Dist::Zilla::Plugin::Manifest
+      name: '@Apocalyptic/Manifest'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::CheckChangesHasContent
+      name: '@Apocalyptic/CheckChangesHasContent'
+      version: 0.003
+    -
+      class: Dist::Zilla::Plugin::Git::Check
+      name: '@Apocalyptic/Git::Check'
+      version: 1.101330
+    -
+      class: Dist::Zilla::Plugin::ConfirmRelease
+      name: '@Apocalyptic/ConfirmRelease'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::FakeRelease
+      name: '@Apocalyptic/FakeRelease'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::ArchiveRelease
+      name: '@Apocalyptic/ArchiveRelease'
+      version: 0.09
+    -
+      class: Dist::Zilla::Plugin::Git::Commit
+      name: '@Apocalyptic/Git::Commit'
+      version: 1.101330
+    -
+      class: Dist::Zilla::Plugin::Git::Tag
+      name: '@Apocalyptic/Git::Tag'
+      version: 1.101330
+    -
+      class: Dist::Zilla::Plugin::Git::Push
+      name: '@Apocalyptic/Git::Push'
+      version: 1.101330
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':InstallModules'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':TestFiles'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':ExecFiles'
+      version: 2.101310
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':ShareFiles'
+      version: 2.101310
+  zilla:
+    class: Dist::Zilla
+    config:
+      is_trial: 0
+    version: 2.101310
+x_authority: cpan:APOCAL
