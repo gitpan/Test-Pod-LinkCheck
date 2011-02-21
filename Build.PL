@@ -4,12 +4,13 @@ use warnings;
 
 use Module::Build 0.3601;
 
+
 my %module_build_args = (
   'build_requires' => {
     'File::Find' => '0',
     'File::Temp' => '0',
     'Module::Build' => '0.3601',
-    'Test::More' => '0',
+    'Test::More' => '0.88',
     'Test::Tester' => '0'
   },
   'configure_requires' => {
@@ -20,10 +21,11 @@ my %module_build_args = (
     'Apocalypse <APOCAL@cpan.org>'
   ],
   'dist_name' => 'Test-Pod-LinkCheck',
-  'dist_version' => '0.004',
+  'dist_version' => '0.005',
   'license' => 'perl',
   'module_name' => 'Test::Pod::LinkCheck',
   'recommends' => {},
+  'recursive_test_files' => 1,
   'requires' => {
     'App::PodLinkCheck::ParseLinks' => '4',
     'App::PodLinkCheck::ParseSections' => '0',

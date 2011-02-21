@@ -1,3 +1,71 @@
+==============================
+9999-99-99 99:99:99 +0000 HEAD
+==============================
+
+  commit f093871ae60728661fd2df819f0fc44995b3dd74
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Mon Feb 21 11:55:42 2011 -0700
+  
+    tweak the tests yet more
+
+  commit 02dae55677f393717fdea2c1c1ee073337121681
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 20:41:37 2011 -0700
+  
+    add test for internal functions
+
+  commit 4a9f115fdfb818028dde3ebd61945bb6463a4d07
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 20:22:03 2011 -0700
+  
+    add cpan_backend_auto attr
+
+  commit 025aa07dc8ea0c935dd399a0bfdd574d6f88c11c
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 19:49:25 2011 -0700
+  
+    fix tests a bit more
+
+  commit b91a595662bd8ddea9228f4b51a307500c07c314
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 18:19:10 2011 -0700
+  
+    Reorganize the POD and cleanup the output
+
+  commit 4f65995bfc67e44dd70cd83e77ae6c8a7e84fa35
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 18:18:51 2011 -0700
+  
+    Make some tests TODO, thanks CPANTesters
+
+  commit 06678816ac9e48bf809e221a56022b2970dac999
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun Feb 20 18:18:35 2011 -0700
+  
+    clean up dist.ini
+
+  commit fdcc6a86cbb3381c48e43ef7c48af5bb11020bc5
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Sun May 30 11:09:02 2010 -0700
+  
+    fix gitignore
+
+  commit 771b46626fb64a1b16a49fc06b6e7687959f7613
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Fri May 28 11:03:11 2010 -0700
+  
+    pod tweak 
+
+=======================================
+2010-05-27 21:29:57 -0700 release-0.004
+=======================================
+
+  commit ed685725086de59ce73781c74762c48ef14ab6da
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu May 27 21:29:57 2010 -0700
+  
+    New CPAN release of Test-Pod-LinkCheck - v0.004 
+
 =======================================
 2010-05-27 21:27:05 -0700 release-0.003
 =======================================

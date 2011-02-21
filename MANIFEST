@@ -14,8 +14,7 @@ dist.ini
 examples/linkcheck.t
 lib/Test/Pod/LinkCheck.pm
 t/00-compile.t
-t/apocalypse.t
+t/000-report-versions-tiny.t
 t/cpan_backend.t
-t/linkcheck.t
-t/linkcheck_import.t
+t/functions.t
 t/simple.t
