@@ -21,7 +21,7 @@ my %module_build_args = (
     'Apocalypse <APOCAL@cpan.org>'
   ],
   'dist_name' => 'Test-Pod-LinkCheck',
-  'dist_version' => '0.005',
+  'dist_version' => '0.006',
   'license' => 'perl',
   'module_name' => 'Test::Pod::LinkCheck',
   'recommends' => {},
@@ -38,7 +38,8 @@ my %module_build_args = (
     'Pod::Find' => '0',
     'Test::Builder' => '0.94',
     'Test::Pod' => '1.44',
-    'perl' => '5.008'
+    'parent' => '0',
+    'perl' => '5.006'
   },
   'script_files' => []
 );

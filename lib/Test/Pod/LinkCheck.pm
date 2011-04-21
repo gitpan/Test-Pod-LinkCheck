@@ -9,7 +9,7 @@
 use strict; use warnings;
 package Test::Pod::LinkCheck;
 BEGIN {
-  $Test::Pod::LinkCheck::VERSION = '0.005';
+  $Test::Pod::LinkCheck::VERSION = '0.006';
 }
 BEGIN {
   $Test::Pod::LinkCheck::AUTHORITY = 'cpan:APOCAL';
@@ -27,7 +27,7 @@ use Test::Builder 0.94;
 my $Test = Test::Builder->new;
 
 # export our 2 subs
-use base qw( Exporter );
+use parent qw( Exporter );
 our @EXPORT_OK = qw( pod_ok all_pod_ok );
 
 
@@ -259,27 +259,30 @@ sub _analyze {
 						}
 					}
 				} else {
-					# Do we have this file installed?
-					if ( ! $self->_known_podfile( $to ) ) {
-						# Sometimes we find a manpage but not the pod...
-						if ( ! $self->_known_manpage( $to ) ) {
-							# Is it a CPAN module?
-							my $res = $self->_known_cpan( $to );
-							if ( defined $res ) {
-								if ( ! $res ) {
+					# Is it a perlfunc reference?
+					if ( ! $self->_known_perlfunc( $to ) ) {
+						# Do we have this file installed?
+						if ( ! $self->_known_podfile( $to ) ) {
+							# Sometimes we find a manpage but not the pod...
+							if ( ! $self->_known_manpage( $to ) ) {
+								# Is it a CPAN module?
+								my $res = $self->_known_cpan( $to );
+								if ( defined $res ) {
+									if ( ! $res ) {
+										# Check for internal section
+										if ( exists $own_sections->{ $to } ) {
+											push( @diag, "$file:$linenum:$column - Link type(pod) to($to) looks like an internal section link - recommend 'L</$to>'" );
+										} else {
+											push( @errors, "$file:$linenum:$column - Unknown link type(pod) to($to) - module doesn't exist in CPAN" );
+										}
+									}
+								} else {
 									# Check for internal section
 									if ( exists $own_sections->{ $to } ) {
 										push( @diag, "$file:$linenum:$column - Link type(pod) to($to) looks like an internal section link - recommend 'L</$to>'" );
 									} else {
-										push( @errors, "$file:$linenum:$column - Unknown link type(pod) to($to) - module doesn't exist in CPAN" );
+										push( @errors, "$file:$linenum:$column - Unknown link type(pod) to($to) - unable to check CPAN" );
 									}
-								}
-							} else {
-								# Check for internal section
-								if ( exists $own_sections->{ $to } ) {
-									push( @diag, "$file:$linenum:$column - Link type(pod) to($to) looks like an internal section link - recommend 'L</$to>'" );
-								} else {
-									push( @errors, "$file:$linenum:$column - Unknown link type(pod) to($to) - unable to check CPAN" );
 								}
 							}
 						}
@@ -304,8 +307,31 @@ sub _analyze {
 	return( \@errors, \@diag );
 }
 
+sub _known_perlfunc {
+	my( $self, $func ) = @_;
+	my $cache = $self->_cache->{'func'};
+
+	if ( ! exists $cache->{ $func } ) {
+		# TODO this sucks, but Pod::Perldoc can't do it because it expects to be ran in the console...
+		require Capture::Tiny;
+		$cache->{ $func } = Capture::Tiny::capture_merged( sub {
+			system( 'perldoc -f ' . $func );
+		} );
+
+		# We need at least 5 newlines to guarantee a real perlfunc
+		# apoc@blackhole:~$ perldoc -f foobar
+		# No documentation for perl function `foobar' found
+		if ( ( $cache->{ $func } =~ tr/\n// ) > 5 ) {
+			$cache->{ $func } = 1;
+		} else {
+			$cache->{ $func } = 0;
+		}
+	}
+
+	return $cache->{ $func };
+}
+
 sub _known_manpage {
-	## no critic ( ProhibitAccessOfPrivateData )
 	my( $self, $page ) = @_;
 	my $cache = $self->_cache->{'man'};
 
@@ -334,7 +360,6 @@ sub _known_manpage {
 }
 
 sub _known_podfile {
-	## no critic ( ProhibitAccessOfPrivateData )
 	my( $self, $link ) = @_;
 	my $cache = $self->_cache->{'pod'};
 
@@ -351,7 +376,7 @@ sub _known_podfile {
 			require File::Spec;
 			require Config;
 			foreach my $dir ( split /\Q$Config::Config{'path_sep'}/o, $ENV{'PATH'} ) {
-				my $filename = File::Spec->catfile( $dir, $link );
+				$filename = File::Spec->catfile( $dir, $link );
 				if ( -e $filename ) {
 					$cache->{ $link } = $filename;
 					last;
@@ -367,22 +392,21 @@ sub _known_podfile {
 }
 
 sub _known_cpan {
-	## no critic ( ProhibitAccessOfPrivateData )
 	my( $self, $module ) = @_;
 
 	# Do we even check CPAN?
 	if ( ! $self->check_cpan ) {
-		return undef;
+		return;
 	}
 
 	# Did the backend encounter an error?
 	if ( $self->_backend_err ) {
-		return undef;
+		return;
 	}
 
 	# Sanity check - we use '.' as the actual cache placeholder...
 	if ( $module eq '.' ) {
-		return undef;
+		return;
 	}
 
 	# is the answer cached already?
@@ -434,12 +458,12 @@ sub _known_cpan_cpanplus {
 				return $self->_known_cpan_cpan( $module );
 			} else {
 				$self->_backend_err( 1 );
-				return undef;
+				return;
 			}
 		}
 	}
 
-	my $result = undef;
+	my $result;
 	eval { local $SIG{'__WARN__'} = sub { return }; $result = $cache->{'.'}->parse_module( 'module' => $module ) };
 	if ( $@ ) {
 		warn "Unable to use CPANPLUS - $@" if $self->verbose;
@@ -448,7 +472,7 @@ sub _known_cpan_cpanplus {
 			return $self->_known_cpan_cpan( $module );
 		} else {
 			$self->_backend_err( 1 );
-			return undef;
+			return;
 		}
 	}
 	if ( defined $result ) {
@@ -506,7 +530,7 @@ sub _known_cpan_cpan {
 				return $self->_known_cpan_cpansqlite( $module );
 			} else {
 				$self->_backend_err( 1 );
-				return undef;
+				return;
 			}
 		}
 	}
@@ -549,11 +573,11 @@ sub _known_cpan_cpansqlite {
 			}
 
 			$self->_backend_err( 1 );
-			return undef;
+			return;
 		}
 	}
 
-	my $result = undef;
+	my $result;
 	eval { local $SIG{'__WARN__'} = sub { return }; $result = $cache->{'.'}->query( 'mode' => 'module', name => $module, max_results => 1 ); };
 	if ( $@ ) {
 		warn "Unable to use CPANSQLite - $@" if $self->verbose;
@@ -564,7 +588,7 @@ sub _known_cpan_cpansqlite {
 		}
 
 		$self->_backend_err( 1 );
-		return undef;
+		return;
 	}
 	if ( $result ) {
 		$cache->{ $module } = 1;
@@ -576,7 +600,6 @@ sub _known_cpan_cpansqlite {
 }
 
 sub _known_podlink {
-	## no critic ( ProhibitAccessOfPrivateData )
 	my( $self, $link, $section ) = @_;
 
 	# First of all, does the file exists?
@@ -593,7 +616,6 @@ sub _known_podlink {
 }
 
 sub _known_podsections {
-	## no critic ( ProhibitAccessOfPrivateData )
 	my( $self, $filename ) = @_;
 	my $cache = $self->_cache->{'sections'};
 
@@ -618,7 +640,11 @@ __PACKAGE__->meta->make_immutable;
 __END__
 =pod
 
-=for stopwords CPAN foo OO backend env CPANPLUS CPANSQLite http
+=for :stopwords Apocalypse cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee
+diff irc mailto metadata placeholders CPAN foo OO backend env CPANPLUS
+CPANSQLite http
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -626,7 +652,7 @@ Test::Pod::LinkCheck - Tests POD for invalid links
 
 =head1 VERSION
 
-  This document describes v0.005 of Test::Pod::LinkCheck - released February 21, 2011 as part of Test-Pod-LinkCheck.
+  This document describes v0.006 of Test::Pod::LinkCheck - released April 21, 2011 as part of Test-Pod-LinkCheck.
 
 =head1 SYNOPSIS
 
@@ -680,7 +706,7 @@ Selects the CPAN backend to use for querying modules. The available ones are: CP
 
 The default is: CPANPLUS
 
-	The backends were tested and verified against those versions. Older versions would work, but is untested!
+	The backends were tested and verified against those versions. Older versions should work, but is untested!
 		CPANPLUS v0.9010
 		CPAN v1.9402
 		CPAN::SQLite v0.199
@@ -748,19 +774,17 @@ Please see those modules/websites for more information related to this module.
 
 =item *
 
-L<App::PodLinkCheck>
+L<App::PodLinkCheck|App::PodLinkCheck>
 
 =item *
 
-L<Pod::Checker>
+L<Pod::Checker|Pod::Checker>
 
 =item *
 
-L<Test::Pod::No404s>
+L<Test::Pod::No404s|Test::Pod::No404s>
 
 =back
-
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders
 
 =head1 SUPPORT
 
@@ -888,6 +912,29 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 The full text of the license can be found in the LICENSE file included with this distribution.
+
+=head1 DISCLAIMER OF WARRANTY
+
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT
+WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND,
+EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME
+THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
+CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
+SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGES.
 
 =cut
 

@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.008; }
+BEGIN { require 5.006; }
 
 use ExtUtils::MakeMaker 6.31;
 
@@ -36,9 +36,10 @@ my %WriteMakefileArgs = (
     'Moose::Util::TypeConstraints' => '1.01',
     'Pod::Find' => '0',
     'Test::Builder' => '0.94',
-    'Test::Pod' => '1.44'
+    'Test::Pod' => '1.44',
+    'parent' => '0'
   },
-  'VERSION' => '0.005',
+  'VERSION' => '0.006',
   'test' => {
     'TESTS' => 't/*.t'
   }

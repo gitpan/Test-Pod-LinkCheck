@@ -15,6 +15,7 @@ examples/linkcheck.t
 lib/Test/Pod/LinkCheck.pm
 t/00-compile.t
 t/000-report-versions-tiny.t
+t/apocalypse.t
 t/cpan_backend.t
 t/functions.t
 t/simple.t

@@ -2,6 +2,47 @@
 9999-99-99 99:99:99 +0000 HEAD
 ==============================
 
+  commit d2649c5447e3723df452a5288d12268ae0825916
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu Apr 21 10:16:21 2011 -0700
+  
+    minor pod typo fix
+
+  commit c738ab0cd2333a6910469157cf6b170b54be7a00
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu Apr 21 10:15:45 2011 -0700
+  
+    fix stuff perlcritic found
+
+  commit 9fd0c3e24c57614cc3e81695fdc233b67670347b
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu Apr 21 09:58:01 2011 -0700
+  
+    add perlfunc scanning, thanks RT#67625 
+
+=======================================
+2011-02-21 14:56:38 -0700 release-0.005
+=======================================
+
+  commit a08db11709df8a560695b6f11b5014dcce238bd4
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Mon Feb 21 14:56:38 2011 -0700
+  
+    New CPAN release of Test-Pod-LinkCheck - v0.005
+
+    Released: 2011-02-21 21:56:25 UTC
+
+    Squashed some test failures by skipping them, thanks CPANTesters!
+
+    Re-worded the output to make it clearer
+
+    Changed the "verbose" attr to false by default
+
+    Add the "cpan_backend_auto" attr to control automatic backend
+    selection logic
+
+    Clarified a lot of things in the POD
+
   commit f093871ae60728661fd2df819f0fc44995b3dd74
   Author: Apocalypse <perl@0ne.us>
   Date:   Mon Feb 21 11:55:42 2011 -0700
