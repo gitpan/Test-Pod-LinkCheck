@@ -2,6 +2,26 @@
 9999-99-99 99:99:99 +0000 HEAD
 ==============================
 
+  commit 3129e838a8812deeebff511129171ab43169fc25
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu Apr 21 21:24:30 2011 -0700
+  
+    fix todo FAIL, thanks RT#67126 
+
+=======================================
+2011-04-21 10:17:44 -0700 release-0.006
+=======================================
+
+  commit 809b1079a8e74743cd74b8e3c61b893c4fc1d01e
+  Author: Apocalypse <perl@0ne.us>
+  Date:   Thu Apr 21 10:17:44 2011 -0700
+  
+    New CPAN release of Test-Pod-LinkCheck - v0.006
+
+    Released: 2011-04-21 17:17:08 UTC
+
+    Add the ability to scan for perlfunc stuff ( thanks RT#67625 )
+
   commit d2649c5447e3723df452a5288d12268ae0825916
   Author: Apocalypse <perl@0ne.us>
   Date:   Thu Apr 21 10:16:21 2011 -0700

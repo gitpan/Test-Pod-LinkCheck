@@ -1,5 +1,10 @@
 Revision history for Test::Pod::LinkCheck
 
+0.007
+	Released: 2011-04-22 04:31:32 UTC
+
+	Finally fix a long-standing testsuite FAIL, I hope! ( thanks RT#67126 and RT#65752 )
+
 0.006
 	Released: 2011-04-21 17:17:08 UTC
 

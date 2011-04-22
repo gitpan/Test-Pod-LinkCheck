@@ -24,7 +24,7 @@ no_index:
 provides:
   Test::Pod::LinkCheck:
     file: lib/Test/Pod/LinkCheck.pm
-    version: 0.006
+    version: 0.007
 requires:
   App::PodLinkCheck::ParseLinks: 4
   App::PodLinkCheck::ParseSections: 0
@@ -44,7 +44,7 @@ resources:
   homepage: http://search.cpan.org/dist/Test-Pod-LinkCheck/
   license: http://dev.perl.org/licenses/
   repository: git://github.com/apocalypse/perl-test-pod-linkcheck.git
-version: 0.006
+version: 0.007
 x_BuiltWith:
   modules:
     App::PodLinkCheck::ParseLinks: 6

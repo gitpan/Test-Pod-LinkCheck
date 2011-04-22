@@ -9,7 +9,7 @@
 use strict; use warnings;
 package Test::Pod::LinkCheck;
 BEGIN {
-  $Test::Pod::LinkCheck::VERSION = '0.006';
+  $Test::Pod::LinkCheck::VERSION = '0.007';
 }
 BEGIN {
   $Test::Pod::LinkCheck::AUTHORITY = 'cpan:APOCAL';
@@ -652,7 +652,7 @@ Test::Pod::LinkCheck - Tests POD for invalid links
 
 =head1 VERSION
 
-  This document describes v0.006 of Test::Pod::LinkCheck - released April 21, 2011 as part of Test-Pod-LinkCheck.
+  This document describes v0.007 of Test::Pod::LinkCheck - released April 21, 2011 as part of Test-Pod-LinkCheck.
 
 =head1 SYNOPSIS
 
@@ -805,17 +805,23 @@ in addition to those websites please use your favorite search engine to discover
 
 Search CPAN
 
+The default CPAN search engine, useful to view POD in HTML format.
+
 L<http://search.cpan.org/dist/Test-Pod-LinkCheck>
 
 =item *
 
 RT: CPAN's Bug Tracker
 
+The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
+
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-Pod-LinkCheck>
 
 =item *
 
-AnnoCPAN: Annotated CPAN documentation
+AnnoCPAN
+
+The AnnoCPAN is a website that allows community annonations of Perl module documentation.
 
 L<http://annocpan.org/dist/Test-Pod-LinkCheck>
 
@@ -823,31 +829,49 @@ L<http://annocpan.org/dist/Test-Pod-LinkCheck>
 
 CPAN Ratings
 
+The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
+
 L<http://cpanratings.perl.org/d/Test-Pod-LinkCheck>
 
 =item *
 
 CPAN Forum
 
+The CPAN Forum is a web forum for discussing Perl modules.
+
 L<http://cpanforum.com/dist/Test-Pod-LinkCheck>
 
 =item *
 
-CPANTS Kwalitee
+CPANTS
+
+The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
 
 L<http://cpants.perl.org/dist/overview/Test-Pod-LinkCheck>
 
 =item *
 
-CPAN Testers Results
+CPAN Testers
 
-L<http://cpantesters.org/distro/T/Test-Pod-LinkCheck.html>
+The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
+
+L<http://www.cpantesters.org/distro/T/Test-Pod-LinkCheck>
 
 =item *
 
 CPAN Testers Matrix
 
+The CPAN Testers Matrix is a website that provides a visual way to determine what Perls/platforms PASSed for a distribution.
+
 L<http://matrix.cpantesters.org/?dist=Test-Pod-LinkCheck>
+
+=item *
+
+CPAN Testers Dependencies
+
+The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
+
+L<http://deps.cpantesters.org/?module=Test::Pod::LinkCheck>
 
 =back
 

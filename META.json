@@ -59,7 +59,7 @@
    "provides" : {
       "Test::Pod::LinkCheck" : {
          "file" : "lib/Test/Pod/LinkCheck.pm",
-         "version" : "0.006"
+         "version" : "0.007"
       }
    },
    "release_status" : "stable",
@@ -78,7 +78,7 @@
          "web" : "http://github.com/apocalypse/perl-test-pod-linkcheck"
       }
    },
-   "version" : "0.006",
+   "version" : "0.007",
    "x_BuiltWith" : {
       "modules" : {
          "App::PodLinkCheck::ParseLinks" : "6",
