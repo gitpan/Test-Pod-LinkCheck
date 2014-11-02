@@ -1,158 +1,113 @@
-==============================
-9999-99-99 99:99:99 +0000 HEAD
-==============================
+==================================================
+Changes from 2013-11-02 00:00:00 +0000 to present.
+==================================================
 
-  commit 3129e838a8812deeebff511129171ab43169fc25
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu Apr 21 21:24:30 2011 -0700
-  
-    fix todo FAIL, thanks RT#67126 
+------------------------------------------
+version 0.008 at 2014-11-02 00:38:26 +0000
+------------------------------------------
 
-=======================================
-2011-04-21 10:17:44 -0700 release-0.006
-=======================================
+  Change: ea77aa8bcc585a8e58b6a8b274dc1173618926e8
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 17:31:51 +0000
 
-  commit 809b1079a8e74743cd74b8e3c61b893c4fc1d01e
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu Apr 21 10:17:44 2011 -0700
-  
-    New CPAN release of Test-Pod-LinkCheck - v0.006
+    remove another test diag output 
 
-    Released: 2011-04-21 17:17:08 UTC
+  Change: 00a2f9bea0e98aef20e14d6a19343db90b14a2c3
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 17:17:37 +0000
 
-    Add the ability to scan for perlfunc stuff ( thanks RT#67625 )
+    fix some bugs in CPANIDX code 
 
-  commit d2649c5447e3723df452a5288d12268ae0825916
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu Apr 21 10:16:21 2011 -0700
-  
-    minor pod typo fix
+  Change: a9477f3d30a53641c48e4c0f040c8758d42826eb
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 15:13:21 +0000
 
-  commit c738ab0cd2333a6910469157cf6b170b54be7a00
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu Apr 21 10:15:45 2011 -0700
-  
-    fix stuff perlcritic found
+    add HTTP::Tiny to CPANIDX 
 
-  commit 9fd0c3e24c57614cc3e81695fdc233b67670347b
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu Apr 21 09:58:01 2011 -0700
-  
-    add perlfunc scanning, thanks RT#67625 
+  Change: 22fd35b849da4eda56affa4b577fbefc0fb976c6
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 14:48:41 +0000
 
-=======================================
-2011-02-21 14:56:38 -0700 release-0.005
-=======================================
+    fix code more :( 
 
-  commit a08db11709df8a560695b6f11b5014dcce238bd4
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Mon Feb 21 14:56:38 2011 -0700
-  
-    New CPAN release of Test-Pod-LinkCheck - v0.005
+  Change: d2ed03aa04bcc420d5c1b30bdb8d98adb8bab6cf
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 14:47:00 +0000
 
-    Released: 2011-02-21 21:56:25 UTC
+    Add CPANIDX backend 
 
-    Squashed some test failures by skipping them, thanks CPANTesters!
+  Change: aa5d4f32ebcae976da9803b1d186f09d7ae9c068
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 14:35:29 +0000
 
-    Re-worded the output to make it clearer
+    silence more debugging 
 
-    Changed the "verbose" attr to false by default
+  Change: b6c848ddd14379964ef24a6b967c9e84ca714b96
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 14:23:38 +0000
 
-    Add the "cpan_backend_auto" attr to control automatic backend
-    selection logic
+    add MetaCPAN backend 
 
-    Clarified a lot of things in the POD
+  Change: 7c7106966c46ec14419eb9d3efb04fa5e3c0b030
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 13:47:30 +0000
 
-  commit f093871ae60728661fd2df819f0fc44995b3dd74
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Mon Feb 21 11:55:42 2011 -0700
-  
-    tweak the tests yet more
+    add notes to Changes 
 
-  commit 02dae55677f393717fdea2c1c1ee073337121681
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 20:41:37 2011 -0700
-  
-    add test for internal functions
+  Change: e9beb43dcdf1d6216622de8ed04a85cb1b912942
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 13:33:57 +0000
 
-  commit 4a9f115fdfb818028dde3ebd61945bb6463a4d07
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 20:22:03 2011 -0700
-  
-    add cpan_backend_auto attr
+    remove unused vars 
 
-  commit 025aa07dc8ea0c935dd399a0bfdd574d6f88c11c
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 19:49:25 2011 -0700
-  
-    fix tests a bit more
+  Change: 7f56d3438d3de3f06c6a910247793f452390189c
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 13:21:03 +0000
 
-  commit b91a595662bd8ddea9228f4b51a307500c07c314
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 18:19:10 2011 -0700
-  
-    Reorganize the POD and cleanup the output
+    tweak more tests and verbosity 
 
-  commit 4f65995bfc67e44dd70cd83e77ae6c8a7e84fa35
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 18:18:51 2011 -0700
-  
-    Make some tests TODO, thanks CPANTesters
+  Change: 6f0b0ec2caf8548b3e33a1c2ff73d2bb7491eab5
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 13:03:06 +0000
 
-  commit 06678816ac9e48bf809e221a56022b2970dac999
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun Feb 20 18:18:35 2011 -0700
-  
-    clean up dist.ini
+    add MetaDB to backend test 
 
-  commit fdcc6a86cbb3381c48e43ef7c48af5bb11020bc5
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Sun May 30 11:09:02 2010 -0700
-  
-    fix gitignore
+  Change: 112b5f7353a4f39c3567eaf20af5379f01a7829c
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 12:55:31 +0000
 
-  commit 771b46626fb64a1b16a49fc06b6e7687959f7613
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Fri May 28 11:03:11 2010 -0700
-  
-    pod tweak 
+    enable verbose if ENV{TEST_VERBOSE} 
 
-=======================================
-2010-05-27 21:29:57 -0700 release-0.004
-=======================================
+  Change: 3f5b108c5cffaf9f31cded4785bf66a66f938ae6
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 12:53:16 +0000
 
-  commit ed685725086de59ce73781c74762c48ef14ab6da
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu May 27 21:29:57 2010 -0700
-  
-    New CPAN release of Test-Pod-LinkCheck - v0.004 
+    move MetaDB to last in ordering 
 
-=======================================
-2010-05-27 21:27:05 -0700 release-0.003
-=======================================
+  Change: 389da8e8cb11e55c645025d8a61dcd2f27d2c89b
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 12:46:14 +0000
 
-  commit a5203b9158104e32cf6ac721ad5c2bd7f4395dd0
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu May 27 21:27:05 2010 -0700
-  
-    New CPAN release of Test-Pod-LinkCheck - v0.003 
+    add use of MetaDB 
 
-=======================================
-2010-05-27 21:20:23 -0700 release-0.002
-=======================================
+  Change: 914d3570a256e41f3b0dbebd2b35c973a113bd53
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 10:51:22 +0000
 
-  commit 52616f18f4b8d05a5dc0a8bded2606871e47bcc2
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu May 27 21:20:23 2010 -0700
-  
-    New CPAN release of Test-Pod-LinkCheck - v0.002
+    add eval to guard against parse_file failures 
 
-  commit db6351b2caaf0a5f78200f943dc84d44ef001714
-  Author: Apocalypse <perl@0ne.us>
-  Date:   Thu May 27 21:19:58 2010 -0700
-  
-    add more stopwords 
+  Change: e2c44f18ead33b85d00e130f6464207d314bde41
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 10:41:21 +0000
 
-===================================
-End of changes in the last 365 days
-===================================
+    add debugging 
+
+  Change: 2e615291867a114367dfa583f13b4d8a216178bd
+  Author: Apocalypse <APOCAL@cpan.org>
+  Date : 2014-11-01 10:08:17 +0000
+
+    toolchain updates 
+
+================================================
+Plus 7 releases after 2013-11-02 00:00:00 +0000.
+================================================

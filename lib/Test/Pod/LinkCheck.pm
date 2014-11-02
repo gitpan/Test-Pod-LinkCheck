@@ -1,19 +1,16 @@
 #
 # This file is part of Test-Pod-LinkCheck
 #
-# This software is copyright (c) 2011 by Apocalypse.
+# This software is copyright (c) 2014 by Apocalypse.
 #
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
 #
 use strict; use warnings;
 package Test::Pod::LinkCheck;
-BEGIN {
-  $Test::Pod::LinkCheck::VERSION = '0.007';
-}
-BEGIN {
-  $Test::Pod::LinkCheck::AUTHORITY = 'cpan:APOCAL';
-}
+# git description: release-0.007-17-gea77aa8
+$Test::Pod::LinkCheck::VERSION = '0.008';
+our $AUTHORITY = 'cpan:APOCAL';
 
 # ABSTRACT: Tests POD for invalid links
 
@@ -30,6 +27,16 @@ my $Test = Test::Builder->new;
 use parent qw( Exporter );
 our @EXPORT_OK = qw( pod_ok all_pod_ok );
 
+#pod =attr check_cpan
+#pod
+#pod If enabled, this module will check the CPAN module database to see if a link is a valid CPAN module or not. It uses the backend
+#pod defined in L</cpan_backend> to do the actual searching.
+#pod
+#pod If disabled, it will resolve links based on locally installed modules. If it isn't installed it will be an error!
+#pod
+#pod The default is: true
+#pod
+#pod =cut
 
 has 'check_cpan' => (
 	is	=> 'rw',
@@ -40,24 +47,46 @@ has 'check_cpan' => (
 {
 	use Moose::Util::TypeConstraints 1.01;
 
+#pod =attr cpan_backend
+#pod
+#pod Selects the CPAN backend to use for querying modules. The available ones are: CPANPLUS, CPAN, CPANSQLite, MetaDB, MetaCPAN, and CPANIDX.
+#pod
+#pod The default is: CPANPLUS
+#pod
+#pod 	The backends were tested and verified against those versions. Older versions should work, but is untested!
+#pod 		CPANPLUS v0.9010
+#pod 		CPAN v1.9402
+#pod 		CPAN::SQLite v0.199
+#pod 		CPAN::Common::Index::MetaDB v0.005
+#pod 		MetaCPAN::API::Tiny v1.131730
+#pod 		MetaCPAN::Client v1.007001
+#pod 		LWP::UserAgent v6.06
+#pod
+#pod =cut
 
-	# TODO add CPANIDX?
 	has 'cpan_backend' => (
 		is	=> 'rw',
-		isa	=> enum( [ qw( CPANPLUS CPAN CPANSQLite ) ] ),
+		isa	=> enum( [ qw( CPANPLUS CPAN CPANSQLite MetaDB MetaCPAN CPANIDX ) ] ),
 		default	=> 'CPANPLUS',
 		trigger => \&_clean_cpan_backend,
 	);
 
 	sub _clean_cpan_backend {
-		my( $self, $new, $old ) = @_;
-
-		# Just clear the cpan cache
+		my $self = shift;
 		$self->_cache->{'cpan'} = {};
 		$self->_backend_err( 0 );
 	}
 }
 
+#pod =attr cpan_backend_auto
+#pod
+#pod Enable to automatically try the CPAN backends to find an available one. It will try the backends in the order defined in L</cpan_backend>
+#pod
+#pod If no backend is available, it will disable the L</check_cpan> attribute and enable the L</cpan_section_err> attribute.
+#pod
+#pod The default is: true
+#pod
+#pod =cut
 
 has 'cpan_backend_auto' => (
 	is	=> 'rw',
@@ -65,6 +94,13 @@ has 'cpan_backend_auto' => (
 	default	=> 1,
 );
 
+#pod =attr cpan_section_err
+#pod
+#pod If enabled, a link pointing to a CPAN module's specific section is treated as an error if it isn't installed.
+#pod
+#pod The default is: false
+#pod
+#pod =cut
 
 has 'cpan_section_err' => (
 	is	=> 'rw',
@@ -72,11 +108,18 @@ has 'cpan_section_err' => (
 	default	=> 0,
 );
 
+#pod =attr verbose
+#pod
+#pod If enabled, this module will print extra diagnostics for the links it's checking.
+#pod
+#pod The default is: copy $ENV{HARNESS_IS_VERBOSE} or $ENV{TEST_VERBOSE} or false
+#pod
+#pod =cut
 
 has 'verbose' => (
 	is	=> 'rw',
 	isa	=> 'Bool',
-	default	=> 0,
+	default	=> sub { defined $ENV{HARNESS_IS_VERBOSE} ? $ENV{HARNESS_IS_VERBOSE} : ( defined $ENV{TEST_VERBOSE} ? $ENV{TEST_VERBOSE} : 0 ) },
 );
 
 # holds the cached results of link look-ups
@@ -100,7 +143,8 @@ has '_backend_err' => (
 );
 
 sub _clean_backend_err {
-	my( $self, $new, $old ) = @_;
+	my $self = shift;
+	my $new = shift;
 
 	# Only clean if an error happened
 	if ( $new ) {
@@ -108,6 +152,18 @@ sub _clean_backend_err {
 	}
 }
 
+#pod =method pod_ok
+#pod
+#pod Accepts the filename to check, and an optional test name.
+#pod
+#pod This method will pass the test if there is no POD links present in the POD or if all links are not an error. Furthermore, if the POD was
+#pod malformed as reported by L<Pod::Simple>, the test will fail and not attempt to check the links.
+#pod
+#pod When it fails, this will show any failing links as diagnostics. Also, some extra information is printed if verbose is enabled.
+#pod
+#pod The default test name is: "LinkCheck test for FILENAME"
+#pod
+#pod =cut
 
 sub pod_ok {
 	my $self = shift;
@@ -140,7 +196,14 @@ sub pod_ok {
 	$parser->complain_stderr( 0 );
 	$parser->no_errata_section( 0 );
 	$parser->no_whining( 0 );
-	$parser->parse_file( $file );
+
+	# numerous reports on RT show this blowing up often :(
+	eval { $parser->parse_file( $file ) };
+	if ( $@ ) {
+		$Test->ok( 0, $name );
+		$Test->diag( "Unable to parse $file => $@" ) if $self->verbose;
+		return 0;
+	}
 
 	# is POD well-formed?
 	if ( $parser->any_errata_seen ) {
@@ -196,6 +259,14 @@ sub pod_ok {
 	return 1;
 }
 
+#pod =method all_pod_ok
+#pod
+#pod Accepts an optional array of files to check. By default it uses all POD files in your distribution.
+#pod
+#pod This method is what you will usually run. Every file is passed to the L</pod_ok> function. This also sets the
+#pod test plan to be the number of files.
+#pod
+#pod =cut
 
 sub all_pod_ok {
 	my $self = shift;
@@ -310,7 +381,7 @@ sub _analyze {
 sub _known_perlfunc {
 	my( $self, $func ) = @_;
 	my $cache = $self->_cache->{'func'};
-
+#	$Test->diag( "perlfunc check for $func" ) if $self->verbose;
 	if ( ! exists $cache->{ $func } ) {
 		# TODO this sucks, but Pod::Perldoc can't do it because it expects to be ran in the console...
 		require Capture::Tiny;
@@ -334,7 +405,7 @@ sub _known_perlfunc {
 sub _known_manpage {
 	my( $self, $page ) = @_;
 	my $cache = $self->_cache->{'man'};
-
+#	$Test->diag( "manpage check for $page" ) if $self->verbose;
 	if ( ! exists $cache->{ $page } ) {
 		my @manargs;
 		if ( $page =~ /(.+)\s*\((.+)\)$/ ) {
@@ -362,7 +433,7 @@ sub _known_manpage {
 sub _known_podfile {
 	my( $self, $link ) = @_;
 	my $cache = $self->_cache->{'pod'};
-
+#	$Test->diag( "podfile check for $link" ) if $self->verbose;
 	if ( ! exists $cache->{ $link } ) {
 		# Is it a plain POD file?
 		require Pod::Find;
@@ -394,20 +465,24 @@ sub _known_podfile {
 sub _known_cpan {
 	my( $self, $module ) = @_;
 
+	# Sanity check - we use '.' as the actual cache placeholder...
+	if ( $module eq '.' ) {
+		die 'sanity check';
+	}
+
 	# Do we even check CPAN?
 	if ( ! $self->check_cpan ) {
+		$Test->diag( "skipping cpan check for $module due to config" ) if $self->verbose;
 		return;
 	}
 
 	# Did the backend encounter an error?
 	if ( $self->_backend_err ) {
+		$Test->diag( "skipping cpan check for $module due to backend error" ) if $self->verbose;
 		return;
 	}
 
-	# Sanity check - we use '.' as the actual cache placeholder...
-	if ( $module eq '.' ) {
-		return;
-	}
+#	$Test->diag( "cpan check for $module" ) if $self->verbose;
 
 	# is the answer cached already?
 	if ( exists $self->_cache->{'cpan'}{ $module } ) {
@@ -415,7 +490,13 @@ sub _known_cpan {
 	}
 
 	# Select the backend?
-	if ( $self->cpan_backend eq 'CPANPLUS' ) {
+	if ( $self->cpan_backend eq 'CPANIDX' ) {
+		return $self->_known_cpan_cpanidx( $module );
+	} elsif ( $self->cpan_backend eq 'MetaCPAN' ) {
+		return $self->_known_cpan_metacpan( $module );
+	} elsif ( $self->cpan_backend eq 'MetaDB' ) {
+		return $self->_known_cpan_metadb( $module );
+	} elsif ( $self->cpan_backend eq 'CPANPLUS' ) {
 		return $self->_known_cpan_cpanplus( $module );
 	} elsif ( $self->cpan_backend eq 'CPAN' ) {
 		return $self->_known_cpan_cpan( $module );
@@ -426,10 +507,134 @@ sub _known_cpan {
 	}
 }
 
+sub _known_cpan_cpanidx {
+	my( $self, $module ) = @_;
+	my $cache = $self->_cache->{'cpan'};
+#	$Test->diag( "cpan:CPANIDX check for $module" ) if $self->verbose;
+	if ( ! exists $cache->{'.'} ) {
+		eval {
+			# Wacky format so dzil will not autoprereq it
+			require 'HTTP/Tiny.pm';
+			$cache->{'.'} = HTTP::Tiny->new;
+		};
+		if ( $@ ) {
+			$Test->diag( "Unable to load HTTP::Tiny - $@" ) if $self->verbose;
+			eval {
+				require 'LWP/UserAgent.pm';
+				$cache->{'.'} = LWP::UserAgent->new( keep_alive => 1 );
+			};
+			if ( $@ ) {
+				$Test->diag( "Unable to load LWP::UserAgent - $@" ) if $self->verbose;
+				if ( $self->cpan_backend_auto ) {
+					$Test->diag( "Unable to use any CPAN backend, disabling searches!" ) if $self->verbose;
+					$self->check_cpan( 0 );
+					$self->cpan_section_err( 1 );
+				} else {
+					$self->_backend_err( 1 );
+				}
+				return;
+			}
+		}
+	}
+
+	eval {
+		my $res = $cache->{'.'}->get("http://cpanidx.org/cpanidx/json/mod/$module");
+		if ( ref( $res ) ne 'HASH' ? $res->is_success : $res->{success} ) {
+			# Did we get a hit?
+# apoc@box:~$ perl -MHTTP::Tiny -MData::Dumper::Concise -e 'print Dumper( HTTP::Tiny->new->get("http://cpanidx.org/cpanidx/json/mod/POE")->{content} )'
+# "[\n   {\n      \"dist_vers\" : \"1.365\",\n      \"dist_name\" : \"POE\",\n      \"cpan_id\" : \"RCAPUTO\",\n      \"mod_vers\" : \"1.365\",\n      \"dist_file\" : \"R/RC/RCAPUTO/POE-1.365.tar.gz\",\n      \"mod_name\" : \"POE\"\n   }\n]\n"
+# apoc@box:~$ perl -MHTTP::Tiny -MData::Dumper::Concise -e 'print Dumper( HTTP::Tiny->new->get("http://cpanidx.org/cpanidx/json/mod/Floo::Bar")->{content} )'
+# "[]\n"
+			if ( length( ref( $res ) ne 'HASH' ? $res->decoded_content : $res->{content} ) > 5 ) {
+				$cache->{$module} = 1;
+			} else {
+				$cache->{$module} = 0;
+			}
+		} else {
+			die "HTTP return non-success";
+		}
+	};
+	if ( $@ ) {
+		$Test->diag( "Unable to find $module on CPANIDX: $@" ) if $self->verbose;
+		$self->_backend_err( 1 );
+		return;
+	}
+	return $cache->{$module};
+}
+
+sub _known_cpan_metacpan {
+	my( $self, $module ) = @_;
+	my $cache = $self->_cache->{'cpan'};
+#	$Test->diag( "cpan:MetaCPAN check for $module" ) if $self->verbose;
+	# init the backend ( and set some options )
+	if ( ! exists $cache->{'.'} ) {
+		eval {
+			# Wacky format so dzil will not autoprereq it
+			require 'MetaCPAN/API/Tiny.pm';
+
+			$cache->{'.'} = MetaCPAN::API::Tiny->new;
+		};
+		if ( $@ ) {
+			$Test->diag( "Unable to load MetaCPAN::API::Tiny - $@" ) if $self->verbose;
+			eval {
+				require 'MetaCPAN/Client.pm';
+
+				$cache->{'.'} = MetaCPAN::Client->new;
+			};
+			if ( $@ ) {
+				$Test->diag( "Unable to load MetaCPAN::Client - $@" ) if $self->verbose;
+				if ( $self->cpan_backend_auto ) {
+					$self->cpan_backend( 'CPANIDX' );
+					return $self->_known_cpan_cpanidx( $module );
+				} else {
+					$self->_backend_err( 1 );
+					return;
+				}
+			}
+		}
+	}
+
+	# API::Tiny just dies on bad modules...
+	eval { $cache->{$module} = defined $cache->{'.'}->module( $module ) ? 1 : 0 };
+	if ( $@ ) {
+		$Test->diag( "Unable to find $module on MetaCPAN: $@" ) if $self->verbose;
+		$cache->{$module} = 0;
+	}
+	return $cache->{$module};
+}
+
+sub _known_cpan_metadb {
+	my( $self, $module ) = @_;
+	my $cache = $self->_cache->{'cpan'};
+#	$Test->diag( "cpan:MetaDB check for $module" ) if $self->verbose;
+	# init the backend ( and set some options )
+	if ( ! exists $cache->{'.'} ) {
+		eval {
+			# Wacky format so dzil will not autoprereq it
+			require 'CPAN/Common/Index/MetaDB.pm';
+
+			$cache->{'.'} = CPAN::Common::Index::MetaDB->new;
+		};
+		if ( $@ ) {
+			$Test->diag( "Unable to load MetaDB - $@" ) if $self->verbose;
+			if ( $self->cpan_backend_auto ) {
+				$self->cpan_backend( 'MetaCPAN' );
+				return $self->_known_cpan_metacpan( $module );
+			} else {
+				$self->_backend_err( 1 );
+				return;
+			}
+		}
+	}
+
+	$cache->{$module} = defined $cache->{'.'}->search_packages( { 'package' => $module } ) ? 1 : 0;
+	return $cache->{$module};
+}
+
 sub _known_cpan_cpanplus {
 	my( $self, $module ) = @_;
 	my $cache = $self->_cache->{'cpan'};
-
+#	$Test->diag( "cpan:CPANPLUS check for $module" ) if $self->verbose;
 	# init the backend ( and set some options )
 	if ( ! exists $cache->{'.'} ) {
 		eval {
@@ -452,7 +657,7 @@ sub _known_cpan_cpanplus {
 			$cache->{'.'} = CPANPLUS::Backend->new( $cpanconfig );
 		};
 		if ( $@ ) {
-			warn "Unable to load CPANPLUS - $@" if $self->verbose;
+			$Test->diag( "Unable to load CPANPLUS - $@" ) if $self->verbose;
 			if ( $self->cpan_backend_auto ) {
 				$self->cpan_backend( 'CPAN' );
 				return $self->_known_cpan_cpan( $module );
@@ -466,7 +671,7 @@ sub _known_cpan_cpanplus {
 	my $result;
 	eval { local $SIG{'__WARN__'} = sub { return }; $result = $cache->{'.'}->parse_module( 'module' => $module ) };
 	if ( $@ ) {
-		warn "Unable to use CPANPLUS - $@" if $self->verbose;
+		$Test->diag( "Unable to use CPANPLUS - $@" ) if $self->verbose;
 		if ( $self->cpan_backend_auto ) {
 			$self->cpan_backend( 'CPAN' );
 			return $self->_known_cpan_cpan( $module );
@@ -487,7 +692,7 @@ sub _known_cpan_cpanplus {
 sub _known_cpan_cpan {
 	my( $self, $module ) = @_;
 	my $cache = $self->_cache->{'cpan'};
-
+#	$Test->diag( "cpan:CPAN check for $module" ) if $self->verbose;
 	# init the backend ( and set some options )
 	if ( ! exists $cache->{'.'} ) {
 		eval {
@@ -524,7 +729,7 @@ sub _known_cpan_cpan {
 			$cache->{'.'} = $CPAN::META->{'readwrite'}->{'CPAN::Module'};
 		};
 		if ( $@ ) {
-			warn "Unable to load CPAN - $@" if $self->verbose;
+			$Test->diag( "Unable to load CPAN - $@" ) if $self->verbose;
 			if ( $self->cpan_backend_auto ) {
 				$self->cpan_backend( 'CPANSQLite' );
 				return $self->_known_cpan_cpansqlite( $module );
@@ -547,7 +752,7 @@ sub _known_cpan_cpan {
 sub _known_cpan_cpansqlite {
 	my( $self, $module ) = @_;
 	my $cache = $self->_cache->{'cpan'};
-
+#	$Test->diag( "cpan:CPANSQLite check for $module" ) if $self->verbose;
 	# init the backend ( and set some options )
 	if ( ! exists $cache->{'.'} ) {
 		eval {
@@ -565,30 +770,28 @@ sub _known_cpan_cpansqlite {
 			$cache->{'.'} = CPAN::SQLite->new;
 		};
 		if ( $@ ) {
-			warn "Unable to load CPANSQLite - $@" if $self->verbose;
+			$Test->diag( "Unable to load CPANSQLite - $@" ) if $self->verbose;
 			if ( $self->cpan_backend_auto ) {
-				warn "Unable to use any CPAN backend, disabling searches!" if $self->verbose;
-				$self->check_cpan( 0 );
-				$self->cpan_section_err( 1 );
+				$self->cpan_backend( 'MetaDB' );
+				return $self->_known_cpan_metadb( $module );
+			} else {
+				$self->_backend_err( 1 );
+				return;
 			}
-
-			$self->_backend_err( 1 );
-			return;
 		}
 	}
 
 	my $result;
 	eval { local $SIG{'__WARN__'} = sub { return }; $result = $cache->{'.'}->query( 'mode' => 'module', name => $module, max_results => 1 ); };
 	if ( $@ ) {
-		warn "Unable to use CPANSQLite - $@" if $self->verbose;
+		$Test->diag( "Unable to use CPANSQLite - $@" ) if $self->verbose;
 		if ( $self->cpan_backend_auto ) {
-			warn "Unable to use any CPAN backend, disabling searches!" if $self->verbose;
-			$self->check_cpan( 0 );
-			$self->cpan_section_err( 1 );
+			$self->cpan_backend( 'MetaDB' );
+			return $self->_known_cpan_metadb( $module );
+		} else {
+			$self->_backend_err( 1 );
+			return;
 		}
-
-		$self->_backend_err( 1 );
-		return;
 	}
 	if ( $result ) {
 		$cache->{ $module } = 1;
@@ -601,7 +804,7 @@ sub _known_cpan_cpansqlite {
 
 sub _known_podlink {
 	my( $self, $link, $section ) = @_;
-
+#	$Test->diag( "podlink check for $link - $section" ) if $self->verbose;
 	# First of all, does the file exists?
 	my $filename = $self->_known_podfile( $link );
 	return 0 if ! defined $filename;
@@ -618,13 +821,20 @@ sub _known_podlink {
 sub _known_podsections {
 	my( $self, $filename ) = @_;
 	my $cache = $self->_cache->{'sections'};
-
+#	$Test->diag( "podsections check for $filename" ) if $self->verbose;
 	if ( ! exists $cache->{ $filename } ) {
 		# Okay, get the sections in the file
 		require App::PodLinkCheck::ParseSections;
 		my $parser = App::PodLinkCheck::ParseSections->new( {} );
-		$parser->parse_file( $filename );
-		$cache->{ $filename } = $parser->sections_hashref;
+
+		# numerous reports on RT show this blowing up often :(
+		eval { $parser->parse_file( $filename ) };
+		if ( $@ ) {
+			$Test->diag( "Unable to parse $filename => $@" ) if $self->verbose;
+			$cache->{ $filename } = undef;
+		} else {
+			$cache->{ $filename } = $parser->sections_hashref;
+		}
 	}
 
 	return $cache->{ $filename };
@@ -636,15 +846,15 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-
 __END__
+
 =pod
 
-=for :stopwords Apocalypse cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee
-diff irc mailto metadata placeholders CPAN foo OO backend env CPANPLUS
-CPANSQLite http
+=encoding UTF-8
 
-=encoding utf-8
+=for :stopwords Apocalypse cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee
+diff irc mailto metadata placeholders metacpan CPAN foo OO backend env
+CPANPLUS CPANSQLite http
 
 =head1 NAME
 
@@ -652,7 +862,7 @@ Test::Pod::LinkCheck - Tests POD for invalid links
 
 =head1 VERSION
 
-  This document describes v0.007 of Test::Pod::LinkCheck - released April 21, 2011 as part of Test-Pod-LinkCheck.
+  This document describes v0.008 of Test::Pod::LinkCheck - released November 01, 2014 as part of Test-Pod-LinkCheck.
 
 =head1 SYNOPSIS
 
@@ -702,7 +912,7 @@ The default is: true
 
 =head2 cpan_backend
 
-Selects the CPAN backend to use for querying modules. The available ones are: CPANPLUS, CPAN, and CPANSQLite.
+Selects the CPAN backend to use for querying modules. The available ones are: CPANPLUS, CPAN, CPANSQLite, MetaDB, MetaCPAN, and CPANIDX.
 
 The default is: CPANPLUS
 
@@ -710,6 +920,10 @@ The default is: CPANPLUS
 		CPANPLUS v0.9010
 		CPAN v1.9402
 		CPAN::SQLite v0.199
+		CPAN::Common::Index::MetaDB v0.005
+		MetaCPAN::API::Tiny v1.131730
+		MetaCPAN::Client v1.007001
+		LWP::UserAgent v6.06
 
 =head2 cpan_backend_auto
 
@@ -729,7 +943,7 @@ The default is: false
 
 If enabled, this module will print extra diagnostics for the links it's checking.
 
-The default is: false
+The default is: copy $ENV{HARNESS_IS_VERBOSE} or $ENV{TEST_VERBOSE} or false
 
 =head1 METHODS
 
@@ -803,6 +1017,14 @@ in addition to those websites please use your favorite search engine to discover
 
 =item *
 
+MetaCPAN
+
+A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+L<http://metacpan.org/release/Test-Pod-LinkCheck>
+
+=item *
+
 Search CPAN
 
 The default CPAN search engine, useful to view POD in HTML format.
@@ -821,7 +1043,7 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-Pod-LinkCheck>
 
 AnnoCPAN
 
-The AnnoCPAN is a website that allows community annonations of Perl module documentation.
+The AnnoCPAN is a website that allows community annotations of Perl module documentation.
 
 L<http://annocpan.org/dist/Test-Pod-LinkCheck>
 
@@ -847,7 +1069,7 @@ CPANTS
 
 The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
 
-L<http://cpants.perl.org/dist/overview/Test-Pod-LinkCheck>
+L<http://cpants.cpanauthors.org/dist/overview/Test-Pod-LinkCheck>
 
 =item *
 
@@ -861,7 +1083,7 @@ L<http://www.cpantesters.org/distro/T/Test-Pod-LinkCheck>
 
 CPAN Testers Matrix
 
-The CPAN Testers Matrix is a website that provides a visual way to determine what Perls/platforms PASSed for a distribution.
+The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
 
 L<http://matrix.cpantesters.org/?dist=Test-Pod-LinkCheck>
 
@@ -920,7 +1142,7 @@ The code is open to the world, and available for you to hack on. Please feel fre
 with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
 from your repository :)
 
-L<http://github.com/apocalypse/perl-test-pod-linkcheck>
+L<https://github.com/apocalypse/perl-test-pod-linkcheck>
 
   git clone git://github.com/apocalypse/perl-test-pod-linkcheck.git
 
@@ -930,35 +1152,33 @@ Apocalypse <APOCAL@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Apocalypse.
+This software is copyright (c) 2014 by Apocalypse.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
-The full text of the license can be found in the LICENSE file included with this distribution.
+The full text of the license can be found in the
+F<LICENSE> file included with this distribution.
 
 =head1 DISCLAIMER OF WARRANTY
 
-BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT
-WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
-PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND,
-EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
-SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME
-THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
 
 IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
-TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
-CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
-SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
-SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
-DAMAGES.
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
 
 =cut
-
